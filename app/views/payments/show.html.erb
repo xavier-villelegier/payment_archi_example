@@ -1,0 +1,18 @@
+<h1>Payment id: <%= @payment.id %></h1>
+
+<p>Amount: <%= @payment.amount %></p>
+
+<%= form_with url: "/payments/#{@payment.id}/authorize", method: :post do |form| %>
+  <%= form.label :query, "Authorize with:" %>
+  <%= form.radio_button :provider, "stripe" %>
+  <%= form.label :provider_stripe, "Stripe" %>
+  <%= form.radio_button :provider, "adyen" %>
+  <%= form.label :provider_adyen, "Adyen" %>
+  <%= form.submit "Authorize" %>
+<% end %>
+
+<%= form_with url: "/payments/#{@payment.id}/capture", method: :post do |form| %>
+  <%= form.label :query, "Capture payment:" %>
+  <%= form.submit "Capture" %>
+<% end %>
+
