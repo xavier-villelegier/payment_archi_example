@@ -21,15 +21,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_23_152608) do
             name: "index_adyen_payment_events_on_payment_event_id"
   end
 
-  create_table "payment_events", force: :cascade do |t|
-    t.text "provider"
-    t.text "event_type"
-    t.integer "payment_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["payment_id"], name: "index_payment_events_on_payment_id"
-  end
-
   create_table "stripe_payment_events", force: :cascade do |t|
     t.json "metadata"
     t.text "psp_reference"
@@ -38,6 +29,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_23_152608) do
     t.datetime "updated_at", null: false
     t.index ["payment_event_id"],
             name: "index_stripe_payment_events_on_payment_event_id"
+  end
+
+  create_table "payment_events", force: :cascade do |t|
+    t.text "provider"
+    t.text "event_type"
+    t.integer "payment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id"], name: "index_payment_events_on_payment_id"
   end
 
   create_table "payments", force: :cascade do |t|

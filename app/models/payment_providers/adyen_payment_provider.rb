@@ -1,22 +1,16 @@
 require "./app/models/payment_providers/payment_provider"
 
 class AdyenPaymentProvider < PaymentProvider
-  def received_authorize_event(payment)
-    puts "received authorizing with Adyen"
+  def payment_authorized(metadata) # in theory we don't need the whole metdata object, Webhook controller will only pass what's needed
+    payment_id = metadata[:external_id]
     payment_event =
-      payment.payment_events.create(
-        event_type: "authorization",
-        provider: "adyen"
+      PaymentEvent.create(
+        event_type: "authorized",
+        provider: "adyen",
+        payment_id: payment_id
       )
-
-    # QUESTION: How to avoid duplicating this logic accross all payment providers?
     AdyenPaymentEvent.create(
-      metadata: {
-        payment_method: {
-          last_digit: "4444"
-        },
-        authorization_id: "123"
-      },
+      metadata: metadata,
       payment_event_id: payment_event.id
     )
   end
@@ -24,16 +18,17 @@ class AdyenPaymentProvider < PaymentProvider
   def capture(last_authorization_event)
     puts "capturing with Adyen"
 
-    adyen_event = last_authorization_event.adyen_payment_event
+    adyen_event =
+      AdyenPaymentEvent.find_by(payment_event_id: last_authorization_event.id)
+
     puts "capturing the following authorization: #{adyen_event.metadata["authorization_id"]}"
 
-    # QUESTION: How to avoid duplicating this logic accross all payment providers?
-    last_authorization_event.payment.update(captured_at: Time.now)
-    last_authorization_event.payment.payment_events.create(
-      event_type: "capture",
-      provider: "adyen"
-    )
-
     puts "captured"
+    true
+  end
+
+  def metadata(payment_event_id)
+    puts "getting metadata for payment_event_id: #{payment_event_id}"
+    AdyenPaymentEvent.find_by(payment_event_id: payment_event_id.to_i).metadata
   end
 end

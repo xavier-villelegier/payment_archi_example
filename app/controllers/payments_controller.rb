@@ -11,7 +11,11 @@ class PaymentsController < ApplicationController
     payment = Payment.find(params[:id])
     payment_provider =
       PaymentProviderFactory.get_provider(payment_provider_param)
-    payment_provider.received_authorize_event(payment)
+
+    # Mock webhook calls
+    payment_provider.payment_authorized(
+      { external_id: payment.id, payment_method: { last_digit: "4444" } }
+    )
   end
 
   def capture
