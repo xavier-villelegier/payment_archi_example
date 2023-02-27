@@ -1,4 +1,5 @@
 require "./app/models/payment_providers/payment_provider"
+require "./app/models/payment_providers/adyen/adyen_payment_event"
 
 class AdyenPaymentProvider < PaymentProvider
   def payment_authorized(metadata) # in theory we don't need the whole metdata object, Webhook controller will only pass what's needed
@@ -22,7 +23,7 @@ class AdyenPaymentProvider < PaymentProvider
       AdyenPaymentEvent.find_by(payment_event_id: last_authorization_event.id)
 
     puts "capturing the following authorization: #{adyen_event.metadata["authorization_id"]}"
-
+    # HTTP call to Adyen to capture authorization_id
     puts "captured"
     true
   end

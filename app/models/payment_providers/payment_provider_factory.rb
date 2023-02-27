@@ -1,5 +1,5 @@
-require "./app/models/payment_providers/stripe_payment_provider"
-require "./app/models/payment_providers/adyen_payment_provider"
+require "./app/models/payment_providers/stripe/stripe_payment_provider"
+require "./app/models/payment_providers/adyen/adyen_payment_provider"
 
 class PaymentProviderFactory
   def self.get_provider(provider)
